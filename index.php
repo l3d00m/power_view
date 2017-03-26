@@ -1,7 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="refresh" content="600">
@@ -148,7 +146,13 @@
         var sum_phase2 = 0;
         var sum_phase3 = 0;
         for(i in responses){
-            xml = $.parseXML(responses[i][0]);
+            if ($.inArray('success', responses) != -1){
+                 //Array only contains a single result in the first "depth"
+                xml = $.parseXML(responses[0]);
+            } else {
+                //Array contains multiple results in it's own arrays
+                xml = $.parseXML(responses[i][0]);    
+            }
             var current_val = parseInt($(xml).find("SolarPanel").text());
             var phase = parseInt($(xml).find("phase").text());
             switch (phase){
@@ -161,6 +165,10 @@
                 case 3:
                     sum_phase3 += current_val;
                     break;  
+            }
+            if ($.inArray('success', responses) != -1){
+                // Don't iterate through a single result 
+                break;
             }
         }  
         $('.production_current_value1').text(sum_phase1);
